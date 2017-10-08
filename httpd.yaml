@@ -1,0 +1,12 @@
+---
+- name: httpd
+  hosts: all
+  gather_facts: True 
+  tasks:
+  - name: Install packages 
+    package: name=httpd state=installed
+  - name: Enable http service 
+    service:
+      name: httpd
+      enabled: true
+      state: started

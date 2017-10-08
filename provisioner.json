@@ -1,0 +1,48 @@
+{
+  "variables": {
+  	"home": "{{env `HOME`}}",
+    "ansible_host": "default",
+    "ansible_connection": "docker"
+  },
+  "builders": [
+    {
+      "type": "docker",
+      "image": "gialia/centos:latest",
+      "commit": "true",
+      "pull": "false",
+      "run_command": [
+        "-d",
+        "-i",
+        "-t",
+        "--cap-add=SYS_ADMIN",
+        "--stop-signal=RTMIN+3",
+        "-v",
+        "/sys/fs/cgroup:/sys/fs/cgroup:ro",
+        "--name",
+        "{{user `ansible_host`}}",
+        "{{.Image}}",
+        "/sbin/init"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "user": "root",
+      "playbook_file": "./httpd.yaml",
+      "extra_arguments": [
+        "--extra-vars",
+        "ansible_host={{user `ansible_host`}} ansible_connection={{user `ansible_connection`}}"
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "gialia/test",
+        "tag": "latest"
+      }
+    ]
+  ]
+}

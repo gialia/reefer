@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t gavalioti/ubuntu:latest .
+docker build -t gialia/ubuntu:latest .
